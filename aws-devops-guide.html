@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cloud DevOps Guide — AWS & GCP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8f9fa;
+  --bg3: #f1f3f5;
+  --text: #1a1a2e;
+  --text2: #495057;
+  --text3: #868e96;
+  --border: rgba(0,0,0,0.1);
+  --border2: rgba(0,0,0,0.18);
+  --accent: #228be6;
+  --accent-bg: #e7f5ff;
+  --accent-text: #1864ab;
+  --success-bg: #ebfbee;
+  --success-text: #2b8a3e;
+  --success-border: #69db7c;
+  --warn-bg: #fff9db;
+  --warn-text: #e67700;
+  --warn-border: #ffd43b;
+  --danger-bg: #fff5f5;
+  --danger-text: #c92a2a;
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+[data-theme="dark"] {
+  --bg: #1a1b1e;
+  --bg2: #25262b;
+  --bg3: #2c2e33;
+  --text: #f1f3f5;
+  --text2: #ced4da;
+  --text3: #868e96;
+  --border: rgba(255,255,255,0.1);
+  --border2: rgba(255,255,255,0.18);
+  --accent: #4dabf7;
+  --accent-bg: #1c3d5a;
+  --accent-text: #74c0fc;
+  --success-bg: #1a3a24;
+  --success-text: #8ce99a;
+  --success-border: #40c057;
+  --warn-bg: #3a2e00;
+  --warn-text: #ffd43b;
+  --warn-border: #e67700;
+  --danger-bg: #3a1a1a;
+  --danger-text: #ff8787;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background .2s,color .2s}
+.topbar{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;gap:16px}
+.logo{font-size:15px;font-weight:600;color:var(--text);white-space:nowrap}
+.logo span{color:var(--accent)}
+.nav{display:flex;gap:6px;flex:1;flex-wrap:wrap}
+.nb{font-size:12px;padding:6px 14px;border-radius:20px;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;transition:all .15s;font-weight:500;font-family:'Inter',sans-serif}
+.nb:hover{background:var(--bg2);color:var(--text)}
+.nb.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.theme-btn{width:34px;height:34px;border-radius:50%;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.theme-btn:hover{background:var(--bg2)}
+.main{max-width:860px;margin:0 auto;padding:28px 24px}
+.view{display:none}.view.active{display:block}
+.view-header{margin-bottom:20px}
+.view-title{font-size:20px;font-weight:600;color:var(--text);margin-bottom:5px}
+.view-sub{font-size:13px;color:var(--text3);line-height:1.6}
+.step{border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden;transition:border-color .15s}
+.step:hover{border-color:var(--border2)}
+.step.open{border-color:var(--accent)}
+.sh{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;background:var(--bg);user-select:none;transition:background .15s}
+.sh:hover{background:var(--bg2)}
+.sn{width:28px;height:28px;border-radius:50%;background:var(--bg3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--text3);flex-shrink:0;transition:all .2s}
+.step.open .sn{background:var(--accent);border-color:var(--accent);color:#fff}
+.stitle{font-size:14px;font-weight:500;color:var(--text);flex:1;line-height:1.4}
+.sbadge{font-size:11px;padding:3px 10px;border-radius:20px;background:var(--bg3);color:var(--text3);border:1px solid var(--border);flex-shrink:0;white-space:nowrap}
+.step.open .sbadge{background:var(--accent-bg);color:var(--accent-text);border-color:var(--accent)}
+.chv{color:var(--text3);font-size:18px;flex-shrink:0;transition:transform .25s}
+.step.open .chv{transform:rotate(180deg)}
+.sbody{display:none;padding:4px 16px 16px;border-top:1px solid var(--border)}
+.step.open .sbody{display:block}
+.explain{background:var(--bg2);border-radius:var(--radius-sm);padding:12px 14px;margin-top:12px}
+.explain p{font-size:13px;color:var(--text2);line-height:1.7}
+.explain p+p{margin-top:6px}
+.lbl{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-top:16px;margin-bottom:8px}
+ul.li{list-style:none;margin-top:2px}
+ul.li li{font-size:13px;color:var(--text);padding:3px 0 3px 18px;position:relative;line-height:1.6}
+ul.li li::before{content:'';position:absolute;left:5px;top:10px;width:6px;height:6px;border-radius:50%;background:var(--accent);opacity:.6}
+pre{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;margin-top:8px;overflow-x:auto}
+code{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text);line-height:1.75;white-space:pre}
+.note{font-size:12.5px;color:var(--accent-text);background:var(--accent-bg);border-left:3px solid var(--accent);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:9px 12px;margin-top:10px;line-height:1.6}
+.warn{font-size:12.5px;color:var(--warn-text);background:var(--warn-bg);border-left:3px solid var(--warn-border);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:9px 12px;margin-top:10px;line-height:1.6}
+.ok{font-size:12.5px;color:var(--success-text);background:var(--success-bg);border-left:3px solid var(--success-border);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:9px 12px;margin-top:10px;line-height:1.6}
+.flow{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;margin-top:10px;font-size:12.5px;color:var(--text2);line-height:2.2;overflow-x:auto;white-space:nowrap}
+.flow .fnode{display:inline-block;background:var(--bg);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:3px 10px;color:var(--text);font-weight:500;font-size:12px;white-space:nowrap}
+.flow .farr{color:var(--accent);margin:0 4px;font-weight:600}
+.tw{overflow-x:auto;margin-top:10px;border-radius:var(--radius-sm);border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{text-align:left;padding:9px 12px;background:var(--bg2);color:var(--text3);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+td{padding:9px 12px;border-top:1px solid var(--border);color:var(--text);vertical-align:top;line-height:1.5}
+tr:hover td{background:var(--bg2)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:12px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px}
+.card-icon{font-size:22px;color:var(--accent);margin-bottom:8px}
+.card-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px}
+.card-sub{font-size:12px;color:var(--text3);line-height:1.5}
+.progress-bar{height:4px;background:var(--bg3);border-radius:2px;margin-bottom:20px;overflow:hidden}
+.progress-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .3s}
+.expand-all{font-size:12px;color:var(--accent);background:transparent;border:none;cursor:pointer;padding:0;font-family:'Inter',sans-serif;margin-left:auto;display:flex;align-items:center;gap:4px}
+.expand-all:hover{opacity:.8}
+.top-actions{display:flex;align-items:center;margin-bottom:14px}
+.prog-label{font-size:12px;color:var(--text3)}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">AWS <span>DevOps</span> Guide</div>
+  <div class="nav" id="mainnav">
+    <button class="nb active" onclick="show('overview',this)"><i class="ti ti-layout-grid"></i> Services overview</button>
+    <button class="nb" onclick="show('ec2flow',this)"><i class="ti ti-server"></i> EC2 flow</button>
+    <button class="nb" onclick="show('ecsflow',this)"><i class="ti ti-box"></i> ECS flow</button>
+    <button class="nb" onclick="show('cost',this)"><i class="ti ti-coin"></i> Cost control</button>
+    <!-- <button class="nb" onclick="show('interview',this)"><i class="ti ti-school"></i> Interview prep</button> -->
+  </div>
+  <button class="theme-btn" onclick="toggleTheme()" id="themeBtn" title="Toggle dark mode"><i class="ti ti-moon"></i></button>
+</div>
+
+<div class="main">
+  <div id="overview" class="view active"></div>
+  <div id="ec2flow" class="view"></div>
+  <div id="ecsflow" class="view"></div>
+  <div id="cost" class="view"></div>
+  <!-- <div id="interview" class="view"></div> -->
+</div>
+
+<script>
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+function renderSecs(secs){
+  return secs.map(s=>{
+    if(s.type==='explain') return `<div class="explain">${s.content.map(p=>`<p>${p}</p>`).join('')}</div>`;
+    if(s.type==='lbl') return `<p class="lbl">${s.text}</p>`;
+    if(s.type==='items') return `<ul class="li">${s.items.map(x=>`<li>${x}</li>`).join('')}</ul>`;
+    if(s.type==='code') return `<pre><code>${esc(s.code)}</code></pre>`;
+    if(s.type==='note') return `<div class="note"><i class="ti ti-info-circle"></i> ${s.text}</div>`;
+    if(s.type==='warn') return `<div class="warn"><i class="ti ti-alert-triangle"></i> ${s.text}</div>`;
+    if(s.type==='ok') return `<div class="ok"><i class="ti ti-circle-check"></i> ${s.text}</div>`;
+    if(s.type==='flow'){
+      const html = s.html.replace(/<span class="arr">/g,'<span class="farr">').replace(/<span>/g,'<span class="fnode">');
+      return `<div class="flow">${html}</div>`;
+    }
+    if(s.type==='table') return `<div class="tw"><table><thead><tr>${s.headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${s.rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+    if(s.type==='cards') return `<div class="cards">${s.cards.map(c=>`<div class="card"><div class="card-icon"><i class="ti ti-${c.icon}"></i></div><p class="card-title">${c.title}</p><p class="card-sub">${c.sub}</p></div>`).join('')}</div>`;
+    return '';
+  }).join('');
+}
+
+function makeSteps(steps, prefix){
+  return steps.map((s,i)=>{
+    const id = prefix+'_'+i;
+    return `<div class="step" id="${id}">
+      <div class="sh" onclick="tog('${id}','${prefix}')">
+        <div class="sn">${i+1}</div>
+        <span class="stitle">${s.title}</span>
+        <span class="sbadge">${s.badge}</span>
+        <i class="ti ti-chevron-down chv"></i>
+      </div>
+      <div class="sbody">${renderSecs(s.sections)}</div>
+    </div>`;
+  }).join('');
+}
+
+const counters = {};
+function tog(id, prefix){
+  const el = document.getElementById(id);
+  el.classList.toggle('open');
+  updateProgress(prefix);
+}
+function updateProgress(prefix){
+  const total = document.querySelectorAll(`[id^="${prefix}_"]`).length;
+  const open = document.querySelectorAll(`[id^="${prefix}_"].open`).length;
+  const bar = document.getElementById('prog_'+prefix);
+  const lbl = document.getElementById('progl_'+prefix);
+  if(bar) bar.style.width = Math.round(open/total*100)+'%';
+  if(lbl) lbl.textContent = open+' / '+total+' expanded';
+}
+function expandAll(prefix){
+  document.querySelectorAll(`[id^="${prefix}_"]`).forEach(el=>el.classList.add('open'));
+  updateProgress(prefix);
+}
+function collapseAll(prefix){
+  document.querySelectorAll(`[id^="${prefix}_"]`).forEach(el=>el.classList.remove('open'));
+  updateProgress(prefix);
+}
+
+function show(v, btn){
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(x=>x.classList.remove('active'));
+  document.getElementById(v).classList.add('active');
+  btn.classList.add('active');
+}
+
+function toggleTheme(){
+  const isDark = document.documentElement.getAttribute('data-theme')==='dark';
+  document.documentElement.setAttribute('data-theme', isDark ? '' : 'dark');
+  document.getElementById('themeBtn').innerHTML = isDark ? '<i class="ti ti-moon"></i>' : '<i class="ti ti-sun"></i>';
+}
+
+function buildView(id, title, sub, steps, prefix){
+  const stepsHTML = makeSteps(steps, prefix);
+  document.getElementById(id).innerHTML = `
+    <div class="view-header">
+      <p class="view-title">${title}</p>
+      <p class="view-sub">${sub}</p>
+    </div>
+    <div class="top-actions">
+      <span class="prog-label" id="progl_${prefix}">0 / ${steps.length} expanded</span>
+      <button class="expand-all" onclick="expandAll('${prefix}')"><i class="ti ti-chevrons-down"></i> Expand all</button>
+      &nbsp;
+      <button class="expand-all" onclick="collapseAll('${prefix}')"><i class="ti ti-chevrons-up"></i> Collapse all</button>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="prog_${prefix}" style="width:0%"></div></div>
+    ${stepsHTML}`;
+}
+
+// ===================== DATA =====================
+
+const overviewData = [
+  {title:"IAM — Identity and Access Management", badge:"Security & auth", sections:[
+    {type:"explain", content:[
+      "IAM controls who can do what in your AWS account. Think of it as the HR system of AWS — it creates users, defines job roles (policies), and enforces permissions on every action.",
+      "Every API call in AWS is checked against IAM. Launching EC2, pushing to ECR, reading a secret — all require explicit permission."
+    ]},
+    {type:"lbl", text:"Core concepts"},
+    {type:"table", headers:["Concept","What it is","When you use it"], rows:[
+      ["User","A person or app with long-term credentials","Your deploy-user for CLI and GitHub Actions"],
+      ["Group","Collection of users sharing policies","dev-team, ops-team"],
+      ["Policy","JSON document with allow/deny rules","AmazonECR_FullAccess, SecretsManagerReadWrite"],
+      ["Role","Temporary permissions assumed by a service","EC2 reading from ECR — no keys stored on server"],
+      ["Instance Profile","A role attached directly to EC2","How EC2 authenticates to AWS without keys"]
+    ]},
+    {type:"note", text:"Interview: We never store IAM user keys on servers. EC2 uses instance profiles — roles that provide auto-rotating temporary credentials. If the server is compromised, credentials expire within hours automatically."}
+  ]},
+  {title:"VPC — Virtual Private Cloud", badge:"Networking foundation", sections:[
+    {type:"explain", content:[
+      "VPC is your private, isolated network on AWS. Everything you create (EC2, RDS, ALB, ECS tasks) lives inside a VPC. You control IP address ranges, subnets, routing, and internet access.",
+      "Every AWS account gets a default VPC — perfectly fine for learning. For production you create a custom VPC with proper subnet tiers."
+    ]},
+    {type:"lbl", text:"3-tier subnet model (production standard)"},
+    {type:"code", code:`VPC: 10.0.0.0/16
+├── Public subnets   (10.0.1.x, 10.0.2.x)  → ALB only, internet-facing
+├── Private subnets  (10.0.3.x, 10.0.4.x)  → EC2 / ECS tasks
+└── DB subnets       (10.0.5.x, 10.0.6.x)  → RDS / ElastiCache only
+
+Internet Gateway  → connects VPC to internet (public subnets use this)
+NAT Gateway       → in public subnet, lets private EC2 reach internet outbound`},
+    {type:"note", text:"Interview: Public subnet = internet-facing (ALB lives here). Private subnet = no inbound from internet, outbound via NAT Gateway. DB subnet = completely isolated from internet."}
+  ]},
+  {title:"EC2 — Elastic Compute Cloud", badge:"Virtual servers", sections:[
+    {type:"explain", content:[
+      "EC2 is a virtual server you fully control. You choose the OS, CPU, RAM, and storage. SSH in, install software, run Docker containers — exactly like renting a VPS from any cloud provider.",
+      "Best for: full server control, stateful workloads, learning DevOps from scratch, cost-effective always-on apps."
+    ]},
+    {type:"lbl", text:"Instance type cheat sheet"},
+    {type:"table", headers:["Type","vCPU","RAM","Use case","~Monthly cost"], rows:[
+      ["t2.micro","1","1 GB","Free tier only (1 year)","Free → ~$8"],
+      ["t3.small","2","2 GB","Learning + small apps","~$15"],
+      ["t3.medium","2","4 GB","Real production apps","~$30"],
+      ["t3.large","2","8 GB","Heavy workloads","~$60"]
+    ]},
+    {type:"note", text:"t = burstable general purpose. 3 = generation. Always prefer t3 over t2 — same price, better baseline CPU performance."}
+  ]},
+  {title:"ECS — Elastic Container Service", badge:"Managed containers", sections:[
+    {type:"explain", content:[
+      "ECS runs your Docker containers without you managing servers. You define Task Definitions (image + CPU + RAM) and ECS runs them. With Fargate launch type there is no EC2 at all — AWS provides the compute on demand.",
+      "Best for: microservices, production apps that need auto-scaling and zero server management."
+    ]},
+    {type:"lbl", text:"EC2 vs ECS Fargate — quick comparison"},
+    {type:"table", headers:["","EC2","ECS Fargate"], rows:[
+      ["You manage servers","Yes — SSH, patches, Docker install","No — AWS manages everything"],
+      ["Control level","Full OS control","Container config only"],
+      ["Cost","Cheaper for always-on workloads","Pay per task second — no idle cost"],
+      ["Scaling","Manual or via Auto Scaling Group","Automatic, built-in"],
+      ["Learning curve","Lower — familiar Linux server","Higher — new ECS concepts"],
+      ["Best for","Learning, single apps, tight budget","Production microservices, client work"]
+    ]}
+  ]},
+  {title:"ECR — Elastic Container Registry", badge:"Private Docker registry", sections:[
+    {type:"explain", content:[
+      "ECR is AWS's private Docker Hub. You push images here from GitHub Actions. EC2 and ECS pull from ECR to run containers. Since it is inside your AWS account, authentication is handled by IAM — no extra credentials.",
+    ]},
+    {type:"lbl", text:"Image flow"},
+    {type:"flow", html:`<span>docker build</span> <span class="arr">→</span> <span>docker tag</span> <span class="arr">→</span> <span>docker push → ECR</span> <span class="arr">→</span> <span>EC2/ECS pull</span> <span class="arr">→</span> <span>docker run</span>`},
+    {type:"lbl", text:"Image URI format"},
+    {type:"code", code:`123456789012.dkr.ecr.us-east-1.amazonaws.com/nestjs-app:latest
+123456789012.dkr.ecr.us-east-1.amazonaws.com/nestjs-app:abc1234  ← SHA tag (for rollback)`},
+    {type:"note", text:"Always tag images with both :latest AND the git commit SHA. Latest is for convenience. SHA tags let you roll back to any previous version precisely."}
+  ]},
+  {title:"ALB — Application Load Balancer", badge:"Traffic routing", sections:[
+    {type:"explain", content:[
+      "ALB distributes incoming HTTP/HTTPS traffic across multiple targets. It handles SSL termination (your app runs plain HTTP internally), health checks, and path-based routing.",
+      "ALB operates at Layer 7 — it understands URLs and headers. This lets you route /api/* to NestJS and /* to Next.js using a single load balancer."
+    ]},
+    {type:"lbl", text:"Path-based routing for your setup"},
+    {type:"code", code:`ALB Listener :443 (HTTPS)
+├── Rule 1: path /api/*  → Target Group: nestjs-tasks  (port 4000)
+└── Rule 2: path /*      → Target Group: nextjs-tasks  (port 3000)
+
+Health check: ALB pings /health on each target every 30s
+→ Unhealthy targets removed from rotation automatically`},
+    {type:"note", text:"Interview: ALB = Layer 7 (HTTP/HTTPS, path-based routing). NLB = Layer 4 (TCP, ultra-low latency, for game servers / IoT). Use ALB for all web apps and APIs."}
+  ]},
+  {title:"Route 53", badge:"DNS service", sections:[
+    {type:"explain", content:[
+      "Route 53 is AWS's DNS service — it translates yourdomain.com into an IP address so browsers know where to connect. It also does health checking and can automatically failover to a backup server if your primary goes down."
+    ]},
+    {type:"lbl", text:"Key DNS record types"},
+    {type:"table", headers:["Record","Purpose","Example"], rows:[
+      ["A","Domain → IPv4 address","yourdomain.com → 54.12.34.56 (Elastic IP)"],
+      ["CNAME","Domain → another domain","www.yourdomain.com → yourdomain.com"],
+      ["ALIAS","Domain → AWS resource (free)","yourdomain.com → ALB DNS name"],
+      ["NS","Authoritative nameservers","Points to Route 53 ns-xxx.awsdns-xx.com"]
+    ]},
+    {type:"note", text:"Use ALIAS record (not CNAME) when pointing root domain to ALB. CNAME on root domain breaks other DNS records like MX (email). ALIAS is AWS-specific and resolves correctly."}
+  ]},
+  {title:"Secrets Manager & Parameter Store", badge:"Store secrets safely", sections:[
+    {type:"explain", content:[
+      "Never hardcode secrets in code, docker-compose.yml, or .env files on servers. Secrets Manager stores them encrypted and your app fetches them at runtime via AWS SDK.",
+      "Parameter Store is free for standard parameters. Use it for learning and small projects. Secrets Manager costs ~$0.40/secret/month but adds auto-rotation and versioning — worth it for production."
+    ]},
+    {type:"lbl", text:"Storing and fetching your Supabase URL"},
+    {type:"code", code:`# Store (run once from your local machine)
+aws ssm put-parameter \\
+  --name "/prod/nestjs/database-url" \\
+  --value "postgresql://postgres:pass@db.xxx.supabase.co:5432/postgres" \\
+  --type SecureString
+
+# Fetch in NestJS at startup
+import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
+const client = new SSMClient({ region: "us-east-1" });
+const res = await client.send(new GetParameterCommand({
+  Name: "/prod/nestjs/database-url",
+  WithDecryption: true
+}));
+process.env.DATABASE_URL = res.Parameter!.Value;`}
+  ]},
+  {title:"CloudWatch", badge:"Logs & monitoring", sections:[
+    {type:"explain", content:[
+      "CloudWatch is AWS's observability platform. It collects logs from your containers, tracks metrics (CPU, memory, disk), and lets you set alarms that send email or trigger actions when thresholds are crossed.",
+      "Add the awslogs driver to docker-compose.yml and all container output automatically ships to CloudWatch — no log agent needed."
+    ]},
+    {type:"lbl", text:"What to monitor"},
+    {type:"cards", cards:[
+      {icon:"chart-bar", title:"Metrics", sub:"EC2 CPU, memory, disk, network — collected automatically"},
+      {icon:"file-text", title:"Logs", sub:"Container stdout/stderr via awslogs Docker driver"},
+      {icon:"bell", title:"Alarms", sub:"Alert when CPU > 80% or 5xx error rate spikes"},
+      {icon:"layout-dashboard", title:"Dashboards", sub:"Custom visual dashboards combining metrics and logs"}
+    ]}
+  ]},
+  {title:"GitHub Actions", badge:"CI/CD automation", sections:[
+    {type:"explain", content:[
+      "GitHub Actions is a CI/CD system built into GitHub. On push to main, it automatically builds your Docker images, pushes to ECR, and deploys to EC2 or ECS — all without you doing anything manually.",
+      "Free for public repos. Private repos get 2000 free minutes/month — enough for many deployments."
+    ]},
+    {type:"lbl", text:"Key concepts"},
+    {type:"table", headers:["Concept","What it is"], rows:[
+      ["Workflow",".github/workflows/deploy.yml — defines your automation pipeline"],
+      ["Trigger","What starts it: on push to main, on PR, on schedule, manual"],
+      ["Job","A set of steps running on a clean ubuntu-latest runner VM"],
+      ["Step","Single command or reusable action inside a job"],
+      ["Secret","Encrypted variable in repo settings — AWS keys, SSH key, etc."],
+      ["Action","Reusable step from Marketplace — e.g. aws-actions/configure-aws-credentials"]
+    ]}
+  ]},
+  {title:"Supabase as your database", badge:"Skip RDS completely", sections:[
+    {type:"explain", content:[
+      "Since you are using Supabase, you skip the entire RDS setup — no database server, no DB security groups, no subnet groups, no backups config. Supabase gives you a hosted PostgreSQL database with a connection string. NestJS connects to it exactly like any PostgreSQL.",
+      "Store the connection string in AWS Parameter Store (free). NestJS fetches it at startup. That is the entire database setup."
+    ]},
+    {type:"ok", text:"With Supabase you skip: RDS (~$25-50/month), DB security group rules, DB subnet group, automated backup config, DB OS patching, and hours of setup. Focus on your app, not database infrastructure."}
+  ]}
+];
+
+const ec2Data = [
+  {title:"Architecture overview — understand before starting", badge:"Read first", sections:[
+    {type:"explain", content:[
+      "In the EC2 flow you manage one Ubuntu server. Next.js and NestJS run as Docker containers on it. GitHub Actions auto-builds and deploys on every push to main. Supabase handles the database remotely.",
+      "This is the simpler, cheaper path. Perfect for learning, personal projects, and small client apps."
+    ]},
+    {type:"lbl", text:"CI/CD flow (push to deploy)"},
+    {type:"flow", html:`<span>git push main</span> <span class="arr">→</span> <span>GitHub Actions</span> <span class="arr">→</span> <span>docker build</span> <span class="arr">→</span> <span>push to ECR</span> <span class="arr">→</span> <span>SSH EC2</span> <span class="arr">→</span> <span>docker-compose up</span>`},
+    {type:"lbl", text:"User traffic flow"},
+    {type:"flow", html:`<span>Browser</span> <span class="arr">→</span> <span>yourdomain.com</span> <span class="arr">→</span> <span>Route 53</span> <span class="arr">→</span> <span>Elastic IP</span> <span class="arr">→</span> <span>Nginx :80/:443</span> <span class="arr">→</span> <span>/api → NestJS :4000</span>`}
+  ]},
+  {title:"Step 1 — prepare AWS account and IAM user", badge:"One-time setup", sections:[
+    {type:"lbl", text:"Create IAM user for CLI + GitHub Actions"},
+    {type:"items", items:[
+      "AWS Console → IAM → Users → Create user",
+      "Username: deploy-user | Enable console access",
+      "Select: Attach policies directly",
+      "Add policies: AmazonEC2FullAccess, AmazonECR_FullAccess, AmazonSSMFullAccess",
+      "Go to Security credentials tab → Create access key → use case: CLI",
+      "Download the CSV — save Access Key ID and Secret Access Key"
+    ]},
+    {type:"lbl", text:"Install and configure AWS CLI on your local machine"},
+    {type:"code", code:`# Install AWS CLI
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip && sudo ./aws/install
+
+# Configure with your IAM user credentials
+aws configure
+# AWS Access Key ID: [paste your key]
+# AWS Secret Access Key: [paste your secret]
+# Default region name: us-east-1
+# Default output format: json
+
+# Verify it works — should show your account info
+aws sts get-caller-identity`}
+  ]},
+  {title:"Step 2 — create security group (firewall)", badge:"Networking", sections:[
+    {type:"explain", content:[
+      "A Security Group is a virtual firewall controlling inbound and outbound traffic to your EC2 instance. You define which ports and IPs are allowed to connect."
+    ]},
+    {type:"lbl", text:"Create in AWS Console"},
+    {type:"items", items:[
+      "EC2 Dashboard → Security Groups → Create Security Group",
+      "Name: web-sg | Description: Web server security group",
+      "VPC: select your default VPC",
+      "Add all inbound rules below, leave outbound rules as default (allow all)"
+    ]},
+    {type:"table", headers:["Port","Source","Why"], rows:[
+      ["22 (SSH)","My IP only","Only you can SSH into the server"],
+      ["80 (HTTP)","0.0.0.0/0","Public web access"],
+      ["443 (HTTPS)","0.0.0.0/0","Secure public web access"],
+      ["3000","0.0.0.0/0","Next.js (remove after Nginx is set up)"],
+      ["4000","0.0.0.0/0","NestJS (remove after Nginx is set up)"]
+    ]},
+    {type:"warn", text:"Restricting SSH to 'My IP' is critical. Open SSH (0.0.0.0/0) means bots will try to brute-force login within minutes of the server going live."}
+  ]},
+  {title:"Step 3 — create ECR repositories", badge:"Image registry", sections:[
+    {type:"code", code:`# Run these on your local machine
+aws ecr create-repository --repository-name nextjs-app --region us-east-1
+aws ecr create-repository --repository-name nestjs-app --region us-east-1
+
+# Note the repositoryUri in the output — format:
+# 123456789012.dkr.ecr.us-east-1.amazonaws.com/nestjs-app
+
+# Enable automatic vulnerability scanning on push
+aws ecr put-image-scanning-configuration \\
+  --repository-name nestjs-app \\
+  --image-scanning-configuration scanOnPush=true --region us-east-1
+
+aws ecr put-image-scanning-configuration \\
+  --repository-name nextjs-app \\
+  --image-scanning-configuration scanOnPush=true --region us-east-1`}
+  ]},
+  {title:"Step 4 — launch EC2 instance and install Docker", badge:"Core server", sections:[
+    {type:"lbl", text:"Launch in AWS Console"},
+    {type:"items", items:[
+      "EC2 → Launch Instance",
+      "Name: web-server",
+      "AMI: Ubuntu Server 22.04 LTS (free tier eligible)",
+      "Instance type: t3.small (recommended) or t2.micro (free tier only)",
+      "Key pair: Create new → name: web-key → RSA → .pem format → Download",
+      "Security group: select web-sg",
+      "Storage: 20 GB gp3",
+      "Advanced details → IAM instance profile: create one with AmazonECR_FullAccess + AmazonSSMFullAccess",
+      "Click Launch Instance — wait ~1 min until status shows Running"
+    ]},
+    {type:"warn", text:"The .pem file downloads ONCE. If you lose it you cannot SSH in and must create a new instance. Save it somewhere safe (e.g. ~/.ssh/web-key.pem)."},
+    {type:"lbl", text:"SSH in and install Docker"},
+    {type:"code", code:`# Fix permissions on your key file (required on Mac/Linux)
+chmod 400 ~/.ssh/web-key.pem
+
+# SSH into your EC2 (replace with your public IP)
+ssh -i "~/.ssh/web-key.pem" ubuntu@<EC2-PUBLIC-IP>
+
+# --- Now you are inside your EC2 server ---
+
+# Update system and install Docker
+sudo apt update && sudo apt upgrade -y
+sudo apt install -y docker.io docker-compose
+sudo systemctl enable docker
+sudo systemctl start docker
+
+# Add ubuntu user to docker group (no sudo needed)
+sudo usermod -aG docker ubuntu
+
+# Log out and back in for group change to take effect
+exit
+ssh -i "~/.ssh/web-key.pem" ubuntu@<EC2-PUBLIC-IP>
+
+# Verify Docker works
+docker --version
+docker ps`}
+  ]},
+  {title:"Step 5 — store secrets in Parameter Store", badge:"Security — no plaintext secrets", sections:[
+    {type:"explain", content:[
+      "Store your Supabase connection URL and any other secrets in AWS Parameter Store — not in docker-compose.yml or .env files on the server. Your NestJS app fetches them at startup using the EC2 instance's IAM role."
+    ]},
+    {type:"code", code:`# Run on your LOCAL machine
+aws ssm put-parameter \\
+  --name "/prod/nestjs/database-url" \\
+  --value "postgresql://postgres:YOUR_PASS@db.YOUR_PROJECT.supabase.co:5432/postgres" \\
+  --type SecureString --region us-east-1
+
+aws ssm put-parameter \\
+  --name "/prod/nestjs/jwt-secret" \\
+  --value "your-super-long-random-jwt-secret-key" \\
+  --type SecureString --region us-east-1`},
+    {type:"lbl", text:"Fetch in NestJS at app startup (config.service.ts)"},
+    {type:"code", code:`import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
+
+async function getParam(name: string): Promise<string> {
+  const client = new SSMClient({ region: "us-east-1" });
+  const res = await client.send(new GetParameterCommand({
+    Name: name,
+    WithDecryption: true,
+  }));
+  return res.Parameter!.Value!;
+}
+
+// In your bootstrap or ConfigModule:
+export async function loadConfig() {
+  return {
+    database: { url: await getParam("/prod/nestjs/database-url") },
+    jwt: { secret: await getParam("/prod/nestjs/jwt-secret") },
+  };
+}`}
+  ]},
+  {title:"Step 6 — GitHub Actions CI/CD pipeline", badge:"Auto deploy on push", sections:[
+    {type:"lbl", text:"Add these secrets to BOTH GitHub repos (Settings → Secrets → Actions)"},
+    {type:"items", items:[
+      "AWS_ACCESS_KEY_ID — from your IAM user",
+      "AWS_SECRET_ACCESS_KEY — from your IAM user",
+      "AWS_ACCOUNT_ID — your 12-digit AWS account number",
+      "EC2_HOST — your EC2 public IP (update this after Step 8 Elastic IP)",
+      "EC2_SSH_KEY — paste the entire contents of your web-key.pem file"
+    ]},
+    {type:"lbl", text:"NestJS repo: create .github/workflows/deploy.yml"},
+    {type:"code", code:`name: Deploy NestJS to EC2
+
+on:
+  push:
+    branches: [main]
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REGISTRY: \${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com
+  IMAGE_TAG: \${{ github.sha }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: \${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: \${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: \${{ env.AWS_REGION }}
+
+      - name: Login to ECR
+        run: |
+          aws ecr get-login-password --region \${{ env.AWS_REGION }} | \\
+          docker login --username AWS --password-stdin \${{ env.ECR_REGISTRY }}
+
+      - name: Build and push NestJS image
+        run: |
+          docker build -t nestjs-app .
+          docker tag nestjs-app \${{ env.ECR_REGISTRY }}/nestjs-app:\${{ env.IMAGE_TAG }}
+          docker tag nestjs-app \${{ env.ECR_REGISTRY }}/nestjs-app:latest
+          docker push \${{ env.ECR_REGISTRY }}/nestjs-app:\${{ env.IMAGE_TAG }}
+          docker push \${{ env.ECR_REGISTRY }}/nestjs-app:latest
+
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: \${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: \${{ secrets.EC2_SSH_KEY }}
+          script: |
+            aws ecr get-login-password --region us-east-1 | \\
+              docker login --username AWS --password-stdin \${{ env.ECR_REGISTRY }}
+            cd ~/app
+            docker-compose pull nestjs-app
+            docker-compose up -d nestjs-app
+            docker image prune -f
+
+      - name: Smoke test — verify deploy succeeded
+        run: |
+          sleep 20
+          curl --fail http://\${{ secrets.EC2_HOST }}:4000/health || exit 1`},
+    {type:"note", text:"Create the same workflow in your Next.js repo — replace nestjs-app with nextjs-app throughout, and smoke test port 3000."}
+  ]},
+  {title:"Step 7 — docker-compose.yml on EC2", badge:"Container config", sections:[
+    {type:"code", code:`# SSH into EC2, then:
+mkdir ~/app && cd ~/app
+nano docker-compose.yml`},
+    {type:"lbl", text:"Paste this complete docker-compose.yml"},
+    {type:"code", code:`version: '3.8'
+
+services:
+  nestjs-app:
+    image: 123456789012.dkr.ecr.us-east-1.amazonaws.com/nestjs-app:latest
+    container_name: nestjs-app
+    ports:
+      - "4000:4000"
+    environment:
+      - NODE_ENV=production
+      # No secrets here — NestJS fetches from Parameter Store at startup
+    restart: always
+    logging:
+      driver: awslogs
+      options:
+        awslogs-group: /app/nestjs
+        awslogs-region: us-east-1
+        awslogs-stream-prefix: nestjs
+
+  nextjs-app:
+    image: 123456789012.dkr.ecr.us-east-1.amazonaws.com/nextjs-app:latest
+    container_name: nextjs-app
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=/api
+    depends_on:
+      - nestjs-app
+    restart: always
+    logging:
+      driver: awslogs
+      options:
+        awslogs-group: /app/nextjs
+        awslogs-region: us-east-1
+        awslogs-stream-prefix: nextjs`},
+    {type:"lbl", text:"Create CloudWatch log groups (run on local machine)"},
+    {type:"code", code:`aws logs create-log-group --log-group-name /app/nestjs --region us-east-1
+aws logs create-log-group --log-group-name /app/nextjs --region us-east-1
+
+# Set retention to 30 days to keep costs low
+aws logs put-retention-policy --log-group-name /app/nestjs --retention-in-days 30 --region us-east-1
+aws logs put-retention-policy --log-group-name /app/nextjs --retention-in-days 30 --region us-east-1`}
+  ]},
+  {title:"Step 8 — install Nginx as reverse proxy", badge:"Traffic routing", sections:[
+    {type:"explain", content:[
+      "Nginx sits in front of your Docker containers and routes traffic. Users hit port 80 (or 443 after SSL). Nginx sends /api/* requests to NestJS on port 4000 and everything else to Next.js on port 3000."
+    ]},
+    {type:"code", code:`# On EC2
+sudo apt install -y nginx
+
+# Create site config
+sudo nano /etc/nginx/sites-available/app`},
+    {type:"lbl", text:"Paste this Nginx config"},
+    {type:"code", code:`server {
+    listen 80;
+    server_name _;  # Replace with your domain after Step 10
+
+    # Route /api/* → NestJS on port 4000
+    location /api/ {
+        proxy_pass http://localhost:4000/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    # Route everything else → Next.js on port 3000
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_cache_bypass $http_upgrade;
+    }
+}`},
+    {type:"code", code:`# Enable config and restart Nginx
+sudo rm /etc/nginx/sites-enabled/default
+sudo ln -s /etc/nginx/sites-available/app /etc/nginx/sites-enabled/
+sudo nginx -t            # MUST say "syntax is ok" and "test is successful"
+sudo systemctl restart nginx
+sudo systemctl enable nginx`},
+    {type:"note", text:"Test: http://<EC2-IP> → Next.js app. http://<EC2-IP>/api → NestJS. If you see Nginx default page, the symlink didn't work — re-check the ln -s command."}
+  ]},
+  {title:"Step 9 — attach Elastic IP (permanent static IP)", badge:"Never lose your IP", sections:[
+    {type:"explain", content:[
+      "By default your EC2 public IP changes every time the instance stops and starts. An Elastic IP is a permanent IP address in your account that stays attached even when the instance restarts.",
+      "Cost: Free while attached to a running instance. Charged ~$0.005/hour if unattached or if the instance is stopped."
+    ]},
+    {type:"lbl", text:"Attach in AWS Console"},
+    {type:"items", items:[
+      "EC2 → Elastic IPs → Allocate Elastic IP address → Allocate",
+      "Select the new IP → Actions → Associate Elastic IP address",
+      "Resource type: Instance → select web-server → Associate",
+      "Your EC2 now has a permanent IP — note it down",
+      "Update EC2_HOST secret in both GitHub repos to this new Elastic IP"
+    ]},
+    {type:"ok", text:"At this point: http://<ELASTIC-IP> opens your Next.js app. http://<ELASTIC-IP>/api reaches your NestJS. Both apps run in Docker containers. GitHub push auto-deploys new code. Containers restart automatically if they crash."}
+  ]},
+  {title:"Step 10 — auto-start containers on server reboot", badge:"Reliability", sections:[
+    {type:"explain", content:[
+      "restart: always in docker-compose.yml handles container crashes. But if the EC2 instance itself reboots, Docker Compose needs to be started by Linux's systemd init system."
+    ]},
+    {type:"code", code:`sudo nano /etc/systemd/system/app.service`},
+    {type:"lbl", text:"Paste this service definition"},
+    {type:"code", code:`[Unit]
+Description=Docker Compose Application
+Requires=docker.service
+After=docker.service network.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/home/ubuntu/app
+ExecStart=/usr/bin/docker-compose up -d
+ExecStop=/usr/bin/docker-compose down
+TimeoutStartSec=0
+User=ubuntu
+
+[Install]
+WantedBy=multi-user.target`},
+    {type:"code", code:`sudo systemctl daemon-reload
+sudo systemctl enable app.service
+sudo systemctl start app.service
+sudo systemctl status app.service   # Should show "active (exited)"
+
+# Test it: reboot the server
+sudo reboot
+# Wait 1-2 minutes, SSH back in
+docker ps   # Both containers should be running automatically`}
+  ]},
+  {title:"Step 11 — point your domain + enable HTTPS", badge:"Domain & SSL", sections:[
+    {type:"lbl", text:"1. Create hosted zone in Route 53"},
+    {type:"items", items:[
+      "Route 53 → Hosted zones → Create hosted zone",
+      "Domain name: yourdomain.com (no www, no https://)",
+      "Type: Public hosted zone → Create",
+      "Note the 4 NS record values (like ns-123.awsdns-45.com)"
+    ]},
+    {type:"lbl", text:"2. Add DNS records"},
+    {type:"items", items:[
+      "Create record: Type A | Name: (leave blank = root domain) | Value: your Elastic IP | TTL: 300",
+      "Create record: Type A | Name: www | Value: same Elastic IP | TTL: 300"
+    ]},
+    {type:"lbl", text:"3. Update nameservers at your registrar"},
+    {type:"items", items:[
+      "Go to Namecheap / GoDaddy / wherever you bought the domain",
+      "Find DNS / Nameserver settings",
+      "Replace all existing nameservers with the 4 Route 53 NS values",
+      "Save — DNS propagation takes 5 minutes to 48 hours"
+    ]},
+    {type:"lbl", text:"4. Update Nginx with your domain and add free HTTPS"},
+    {type:"code", code:`# Update Nginx server_name
+sudo nano /etc/nginx/sites-available/app
+# Change: server_name yourdomain.com www.yourdomain.com;
+sudo nginx -t && sudo systemctl reload nginx
+
+# Install Certbot for free SSL (Let's Encrypt)
+sudo apt install -y certbot python3-certbot-nginx
+sudo certbot --nginx -d yourdomain.com -d www.yourdomain.com
+# Follow prompts — Certbot auto-configures HTTPS in Nginx
+
+# Verify auto-renewal works
+sudo certbot renew --dry-run`},
+    {type:"ok", text:"Done! https://yourdomain.com → Next.js app. https://yourdomain.com/api → NestJS API. SSL auto-renews every 90 days. Auto-deploys on git push. Containers auto-restart on reboot."}
+  ]}
+];
+
+const ecsData = [
+  {title:"ECS architecture overview — understand before starting", badge:"Read first", sections:[
+    {type:"explain", content:[
+      "In the ECS Fargate flow you define containers and AWS runs them — no servers to SSH into, no Docker to install, no systemd to configure. ECS handles container scheduling, health checks, rolling deploys, and auto-scaling.",
+      "More complex and more expensive than EC2 (~$60-80/month vs ~$18/month) but this is how production microservices are run at scale."
+    ]},
+    {type:"lbl", text:"Traffic flow"},
+    {type:"flow", html:`<span>Browser</span> <span class="arr">→</span> <span>Route 53</span> <span class="arr">→</span> <span>ALB :443</span> <span class="arr">→</span> <span>/api → NestJS Task</span>`},
+    {type:"lbl", text:"Deploy flow"},
+    {type:"flow", html:`<span>git push main</span> <span class="arr">→</span> <span>GitHub Actions</span> <span class="arr">→</span> <span>Build + push ECR</span> <span class="arr">→</span> <span>New Task Definition</span> <span class="arr">→</span> <span>ECS rolling deploy</span>`},
+    {type:"note", text:"Key advantage over EC2: ECS automatically starts a new task version, waits for health checks, then removes the old task — zero-downtime rolling deploy with no manual steps."}
+  ]},
+  {title:"Step 1 — VPC with public and private subnets", badge:"Networking", sections:[
+    {type:"explain", content:[
+      "For ECS production setup, create a VPC with proper subnet tiers. ALB lives in public subnets. ECS tasks run in private subnets — not directly reachable from the internet. This is defense in depth."
+    ]},
+    {type:"lbl", text:"Easiest way — VPC wizard in Console"},
+    {type:"items", items:[
+      "AWS Console → VPC → Create VPC → select 'VPC and more'",
+      "Name: prod-vpc | IPv4 CIDR: 10.0.0.0/16",
+      "Number of AZs: 2 | Public subnets: 2 | Private subnets: 2",
+      "NAT Gateways: 1 (1 per AZ for full HA, but 1 shared to save cost during learning)",
+      "VPC endpoints: S3 (free — speeds up ECR image pulls)",
+      "Click Create VPC — AWS creates everything automatically"
+    ]},
+    {type:"lbl", text:"Security groups to create"},
+    {type:"table", headers:["Name","Inbound rules","Attached to"], rows:[
+      ["alb-sg","80 from 0.0.0.0/0 and 443 from 0.0.0.0/0","ALB only"],
+      ["nestjs-sg","4000 from alb-sg security group ID","NestJS ECS tasks"],
+      ["nextjs-sg","3000 from alb-sg security group ID","Next.js ECS tasks"]
+    ]},
+    {type:"note", text:"ECS tasks have no public IP. Only the ALB can reach them. The internet cannot directly hit your containers — only through ALB which applies routing rules and health checks."}
+  ]},
+  {title:"Step 2 — create ECR repos and IAM roles", badge:"Prereqs", sections:[
+    {type:"code", code:`# Create ECR repos (same as EC2 flow)
+aws ecr create-repository --repository-name nextjs-app --region us-east-1
+aws ecr create-repository --repository-name nestjs-app --region us-east-1`},
+    {type:"lbl", text:"Create ECS Task Execution Role (IAM Console)"},
+    {type:"items", items:[
+      "IAM → Roles → Create role → AWS service → Elastic Container Service → Elastic Container Service Task",
+      "Attach policy: AmazonECSTaskExecutionRolePolicy (lets ECS pull from ECR + write CloudWatch logs)",
+      "Attach policy: AmazonSSMReadOnlyAccess (lets tasks read Parameter Store secrets)",
+      "Name it: ecsTaskExecutionRole → Create"
+    ]},
+    {type:"note", text:"Interview: ecsTaskExecutionRole is the infrastructure role — it gives ECS permission to pull your Docker image and send logs. It is not your app's runtime role. They can be separate for least-privilege."}
+  ]},
+  {title:"Step 3 — create ECS cluster", badge:"Container platform", sections:[
+    {type:"items", items:[
+      "AWS Console → ECS → Clusters → Create Cluster",
+      "Cluster name: prod-cluster",
+      "Infrastructure: AWS Fargate (serverless — no EC2 instances to manage)",
+      "Click Create — takes about 30 seconds"
+    ]},
+    {type:"explain", content:[
+      "A cluster is a logical boundary for your ECS services and tasks. With Fargate there are no EC2 instances inside it — AWS provides compute on-demand per task and you only pay for the seconds the task runs."
+    ]}
+  ]},
+  {title:"Step 4 — create task definitions", badge:"Container blueprints", sections:[
+    {type:"explain", content:[
+      "A Task Definition is the ECS equivalent of docker-compose.yml. It defines the Docker image, CPU, RAM, environment variables, secret references, port mappings, and log configuration for a container. Create one for NestJS and one for Next.js."
+    ]},
+    {type:"lbl", text:"NestJS task definition JSON"},
+    {type:"code", code:`{
+  "family": "nestjs-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::ACCOUNT_ID:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::ACCOUNT_ID:role/ecsTaskExecutionRole",
+  "containerDefinitions": [{
+    "name": "nestjs-app",
+    "image": "ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/nestjs-app:latest",
+    "portMappings": [{ "containerPort": 4000, "protocol": "tcp" }],
+    "environment": [
+      { "name": "NODE_ENV", "value": "production" }
+    ],
+    "secrets": [{
+      "name": "DATABASE_URL",
+      "valueFrom": "arn:aws:ssm:us-east-1:ACCOUNT_ID:parameter/prod/nestjs/database-url"
+    }],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "/ecs/nestjs",
+        "awslogs-region": "us-east-1",
+        "awslogs-stream-prefix": "nestjs"
+      }
+    },
+    "healthCheck": {
+      "command": ["CMD-SHELL", "curl -f http://localhost:4000/health || exit 1"],
+      "interval": 30,
+      "timeout": 5,
+      "retries": 3,
+      "startPeriod": 60
+    }
+  }]
+}`},
+    {type:"note", text:"Create a similar task definition for Next.js — same structure, replace nestjs with nextjs, port 4000 with 3000. Register both in ECS Console under Task Definitions → Create new task definition → JSON tab."}
+  ]},
+  {title:"Step 5 — create ALB and target groups", badge:"Load balancer", sections:[
+    {type:"lbl", text:"Create target groups first (EC2 → Target Groups)"},
+    {type:"items", items:[
+      "Create Target Group → Type: IP addresses | Protocol: HTTP | Port: 4000 | VPC: prod-vpc",
+      "Health check path: /health | Name: nestjs-tg → Create",
+      "Repeat for Next.js: port 3000, health check path: /, name: nextjs-tg"
+    ]},
+    {type:"lbl", text:"Create the Application Load Balancer"},
+    {type:"items", items:[
+      "EC2 → Load Balancers → Create → Application Load Balancer",
+      "Name: prod-alb | Scheme: Internet-facing | IP type: IPv4",
+      "VPC: prod-vpc | Select BOTH public subnets (different AZs)",
+      "Security group: alb-sg",
+      "Listener HTTP:80 → default action: Redirect to HTTPS port 443",
+      "Listener HTTPS:443 → select ACM certificate (request one first — see Step 8)"
+    ]},
+    {type:"lbl", text:"HTTPS:443 listener routing rules"},
+    {type:"code", code:`Rule 1 (priority 1): IF path is /api/*  → forward to nestjs-tg
+Rule 2 (default):                        → forward to nextjs-tg`}
+  ]},
+  {title:"Step 6 — create ECS services", badge:"Run containers", sections:[
+    {type:"explain", content:[
+      "An ECS Service keeps N tasks running at all times. If a task crashes, ECS replaces it. The service registers tasks with the ALB target group and handles rolling deployments automatically."
+    ]},
+    {type:"lbl", text:"Create NestJS service (ECS → prod-cluster → Services → Create)"},
+    {type:"items", items:[
+      "Launch type: Fargate | Task definition: nestjs-task | Revision: LATEST",
+      "Service name: nestjs-service | Desired tasks: 1 (use 2 for high availability)",
+      "VPC: prod-vpc | Subnets: select PRIVATE subnets | Security group: nestjs-sg",
+      "Public IP: DISABLED (tasks are in private subnet — ALB reaches them internally)",
+      "Load balancer: prod-alb | Container: nestjs-app:4000 | Target group: nestjs-tg",
+      "Click Create"
+    ]},
+    {type:"items", items:[
+      "Repeat for Next.js: task=nextjs-task, name=nextjs-service, SG=nextjs-sg, TG=nextjs-tg"
+    ]},
+    {type:"ok", text:"ECS now runs your containers in Fargate, registers them with the ALB, health-checks them, and automatically replaces any that fail. Zero servers to SSH into."}
+  ]},
+  {title:"Step 7 — GitHub Actions pipeline for ECS", badge:"CI/CD — ECS style", sections:[
+    {type:"explain", content:[
+      "For ECS the deploy step is different from EC2. Instead of SSH-ing in, you register a new Task Definition revision pointing to the new image SHA, then update the ECS service. ECS handles the rolling deploy — starts new task, health checks it, then stops old task."
+    ]},
+    {type:"code", code:`name: Deploy NestJS to ECS
+
+on:
+  push:
+    branches: [main]
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REGISTRY: \${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com
+  IMAGE_TAG: \${{ github.sha }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: \${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: \${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: \${{ env.AWS_REGION }}
+
+      - name: Login to ECR
+        run: |
+          aws ecr get-login-password | docker login --username AWS \\
+            --password-stdin \${{ env.ECR_REGISTRY }}
+
+      - name: Build and push image (tagged with SHA for rollback)
+        run: |
+          docker build -t nestjs-app .
+          docker tag nestjs-app \${{ env.ECR_REGISTRY }}/nestjs-app:\${{ env.IMAGE_TAG }}
+          docker tag nestjs-app \${{ env.ECR_REGISTRY }}/nestjs-app:latest
+          docker push \${{ env.ECR_REGISTRY }}/nestjs-app:\${{ env.IMAGE_TAG }}
+          docker push \${{ env.ECR_REGISTRY }}/nestjs-app:latest
+
+      - name: Get current task definition
+        run: |
+          aws ecs describe-task-definition --task-definition nestjs-task \\
+            --query taskDefinition > task-def.json
+
+      - name: Update image in task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-def.json
+          container-name: nestjs-app
+          image: \${{ env.ECR_REGISTRY }}/nestjs-app:\${{ env.IMAGE_TAG }}
+
+      - name: Deploy to ECS — rolling update
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: \${{ steps.task-def.outputs.task-definition }}
+          service: nestjs-service
+          cluster: prod-cluster
+          wait-for-service-stability: true`},
+    {type:"note", text:"wait-for-service-stability: true means GitHub Actions waits for the new task to pass health checks before marking the deploy as successful. If health checks fail, ECS keeps the old task running — automatic rollback."}
+  ]},
+  {title:"Step 8 — Route 53 + ACM certificate + HTTPS", badge:"Domain & SSL", sections:[
+    {type:"lbl", text:"1. Request free SSL certificate in ACM"},
+    {type:"items", items:[
+      "AWS Console → Certificate Manager → Request certificate → Request a public certificate",
+      "Domain names: yourdomain.com and *.yourdomain.com (wildcard covers subdomains)",
+      "Validation method: DNS validation",
+      "Click Request → then 'Create records in Route 53' (one click — automatic)"
+    ]},
+    {type:"lbl", text:"2. Create Route 53 hosted zone"},
+    {type:"items", items:[
+      "Route 53 → Hosted zones → Create hosted zone → yourdomain.com → Public",
+      "Create record: Type A | Name: (blank = root) | Alias: ON | Route to ALB → select prod-alb",
+      "Create record: Type A | Name: www | Alias: ON | Route to same ALB",
+      "Update nameservers at your domain registrar to the 4 Route 53 NS values"
+    ]},
+    {type:"lbl", text:"3. Add HTTPS listener to ALB with ACM cert"},
+    {type:"items", items:[
+      "EC2 → prod-alb → Listeners → Add listener → HTTPS:443",
+      "Certificate: select the ACM certificate (must show Issued status first)",
+      "Add path rules: /api/* → nestjs-tg and /* → nextjs-tg"
+    ]},
+    {type:"ok", text:"https://yourdomain.com → Next.js via ALB → ECS Fargate task. https://yourdomain.com/api → NestJS via ALB → ECS Fargate task. ACM certificates auto-renew. Zero servers to manage. Auto-scaling. Zero-downtime deploys."}
+  ]},
+  {title:"EC2 vs ECS — when to use which", badge:"Decision guide", sections:[
+    {type:"table", headers:["Situation","EC2","ECS Fargate"], rows:[
+      ["Learning AWS fundamentals","Yes — simpler","No — steep learning curve"],
+      ["Personal / side projects","Yes — cheapest","No — ALB alone $16/mo"],
+      ["Small client production app","Fine for low traffic","Better for reliability"],
+      ["Multiple microservices","Gets messy with docker-compose","Natural fit"],
+      ["Need horizontal auto-scaling","Needs ASG setup","Built-in, automatic"],
+      ["Monthly budget under $30","Yes","No"],
+      ["Interviewing at a tech company","Know basics","Know deeply"],
+      ["Zero server management goal","No","Yes"]
+    ]},
+    {type:"note", text:"Recommendation: Build the EC2 flow first — it teaches you Docker, Nginx, SSH, Linux, and AWS fundamentals that make ECS concepts much easier to understand. Then migrate to ECS once comfortable."}
+  ]}
+];
+
+const costData = [
+  {title:"What costs money — know before you spend", badge:"Full breakdown", sections:[
+    {type:"table", headers:["Service","Monthly cost","Free tier"], rows:[
+      ["EC2 t3.small","~$15","t2.micro free 750hrs (12 months, 1 account)"],
+      ["Elastic IP","Free if attached","$0.005/hr if unattached or instance stopped"],
+      ["ECR storage","$0.10/GB","500 MB/month free forever"],
+      ["Data transfer out","$0.09/GB after 1 GB","1 GB/month free"],
+      ["CloudWatch Logs","$0.50/GB ingested","5 GB free forever"],
+      ["Parameter Store","Free (standard)","Standard params free forever"],
+      ["Secrets Manager","$0.40/secret","No free tier — use Parameter Store instead"],
+      ["Route 53 hosted zone","$0.50/zone/month","No free tier"],
+      ["Route 53 queries","$0.40/million","No free tier"],
+      ["ALB (ECS flow)","~$16 minimum","No free tier"],
+      ["Fargate vCPU","$0.04048/vCPU/hr","No free tier"],
+      ["NAT Gateway (ECS)","~$32/month + data","No free tier — most expensive ECS cost"]
+    ]},
+    {type:"ok", text:"EC2 learning setup total: ~$18/month (EC2 + Elastic IP + Route 53 + ECR). ECS production setup total: ~$60-80/month (EC2 + ALB + NAT Gateway + Fargate). Supabase free tier handles your database for free."}
+  ]},
+  {title:"Set up billing alerts — do this TODAY", badge:"Most important first step", sections:[
+    {type:"items", items:[
+      "AWS Console → Billing → Budgets → Create budget",
+      "Type: Cost budget | Period: Monthly | Budgeted amount: $30 (or your limit)",
+      "Alert 1: 80% of budget → email you",
+      "Alert 2: 100% of budget → email you",
+      "Click Create budget"
+    ]},
+    {type:"lbl", text:"Also enable cost anomaly detection"},
+    {type:"items", items:[
+      "Billing → Cost Anomaly Detection → Create monitor",
+      "Monitor type: AWS services",
+      "Alert threshold: $10 individual anomaly",
+      "This catches mistakes — a loop downloading data, a stuck service, etc."
+    ]},
+    {type:"ok", text:"Takes 5 minutes. This should be the very first thing you do in any AWS account — before launching any resources."}
+  ]},
+  {title:"Cost saving strategies — keep the bill low", badge:"Practical habits", sections:[
+    {type:"lbl", text:"EC2 strategies"},
+    {type:"items", items:[
+      "Use t2.micro in your first 12 months — it is free (750 hours/month, one per account)",
+      "Stop EC2 when not using — stopped instances don't charge for compute (storage still ~$0.80/month for 20GB)",
+      "Delete Elastic IPs when not attached — they cost $0.005/hour = $3.60/month while unattached",
+      "Spot instances: up to 90% cheaper for non-critical workloads (can be interrupted with 2-minute notice)"
+    ]},
+    {type:"lbl", text:"ECR image cleanup — auto-delete old images"},
+    {type:"code", code:`# Set lifecycle policy to keep only last 5 images
+aws ecr put-lifecycle-policy \\
+  --repository-name nestjs-app \\
+  --lifecycle-policy '{
+    "rules": [{
+      "rulePriority": 1,
+      "description": "Keep last 5 images",
+      "selection": {
+        "tagStatus": "any",
+        "countType": "imageCountMoreThan",
+        "countNumber": 5
+      },
+      "action": { "type": "expire" }
+    }]
+  }' --region us-east-1`},
+    {type:"lbl", text:"CloudWatch log retention — stop paying for old logs"},
+    {type:"code", code:`# Set all log groups to expire after 30 days
+aws logs put-retention-policy --log-group-name /app/nestjs --retention-in-days 30 --region us-east-1
+aws logs put-retention-policy --log-group-name /app/nextjs --retention-in-days 30 --region us-east-1`},
+    {type:"lbl", text:"General habits"},
+    {type:"items", items:[
+      "Use Parameter Store (free) instead of Secrets Manager ($0.40/secret) for simple string secrets",
+      "Tag all resources: Project=learning, Env=dev — use Cost Explorer to filter by tag",
+      "Check Free Tier Usage: Billing → Free Tier — see what is still free before spending",
+      "Enable Cost Explorer (free) to see per-service daily spend charts",
+      "Delete resources you are not using — unused EIPs, old snapshots, empty NAT Gateways all cost money"
+    ]}
+  ]},
+  {title:"Monthly cost review checklist", badge:"Ongoing habit", sections:[
+    {type:"lbl", text:"Run this check every month (takes 10 minutes)"},
+    {type:"items", items:[
+      "Cost Explorer → Last month → sort by service → identify top spenders",
+      "EC2 → Elastic IPs → look for any 'Not associated' IPs → release them",
+      "ECR → check image counts per repo → apply lifecycle policy if growing",
+      "CloudWatch → Log groups → check retention settings → set any 'Never expire' groups to 30 days",
+      "EC2 → Snapshots → delete old automated or manual snapshots you no longer need",
+      "Check Cost Anomaly Detection alerts — any unusual spikes?",
+      "Check if you are still in free tier limits for any service"
+    ]},
+    {type:"note", text:"The biggest surprise bills come from: forgot NAT Gateway running ($32/month), unattached Elastic IPs, CloudWatch logs set to never expire, and data transfer charges from high-traffic apps."}
+  ]}
+];
+
+const interviewData = [
+  {title:"EC2 vs ECS vs Lambda — when to use which", badge:"Most commonly asked", sections:[
+    {type:"table", headers:["Service","What it is","Use when"], rows:[
+      ["EC2","Full VM you manage","Full control, stateful, learning, cost sensitive"],
+      ["ECS Fargate","Managed containers","Containerized apps, microservices, auto-scale"],
+      ["ECS on EC2","Containers on your EC2","Cost optimization at scale, GPU workloads"],
+      ["Lambda","Serverless functions","Event-driven, async jobs, webhooks, variable traffic"],
+      ["App Runner","Fully managed containers","Simplest path, no ALB/cluster config needed"],
+      ["Elastic Beanstalk","Managed EC2 + deployment","Quick deploy without learning DevOps concepts"]
+    ]},
+    {type:"note", text:"Interview answer: For always-on web apps and APIs we use EC2 or ECS. For event-driven, async, or unpredictable traffic we use Lambda. The choice depends on traffic pattern, state requirements, and how much operational overhead the team can absorb."}
+  ]},
+  {title:"Explain your CI/CD pipeline end to end", badge:"Always asked in every interview", sections:[
+    {type:"explain", content:[
+      "Have this answer memorized. Interviewers ask this to see if you actually understand the deployment process or just followed a tutorial."
+    ]},
+    {type:"lbl", text:"Model answer — EC2 pipeline"},
+    {type:"code", code:`"Our CI/CD uses GitHub Actions triggered on push to main.
+
+Steps:
+1. Checkout code on ubuntu-latest runner
+2. Configure AWS credentials from repository secrets
+3. Authenticate Docker to ECR via aws ecr get-login-password
+4. Build Docker image, tag with git commit SHA for traceability
+5. Push image to ECR — tagged both :SHA and :latest
+   - SHA tag enables rollback to any previous version
+   - latest tag for convenience in docker-compose
+6. SSH into EC2 via appleboy/ssh-action
+7. Pull new image from ECR, rolling restart via docker-compose up -d
+8. Smoke test: curl /health endpoint — pipeline fails on non-200
+   - If smoke test fails, old container is still running — minimal downtime
+
+Secrets stored in AWS Parameter Store, never in env files.
+Container logs ship to CloudWatch via awslogs driver.
+Containers configured with restart: always for crash recovery."`}
+  ]},
+  {title:"IAM user vs IAM role — the key difference", badge:"Security fundamentals", sections:[
+    {type:"table", headers:["","IAM User","IAM Role"], rows:[
+      ["Credentials","Long-term access key + secret key","Temporary credentials (auto-expire 1-12hrs)"],
+      ["Used by","Humans, CLI tools, GitHub Actions","AWS services: EC2, Lambda, ECS tasks"],
+      ["Stored where","~/.aws/credentials or GitHub secrets","Nowhere — assumed at runtime via metadata API"],
+      ["Risk if leaked","Permanent until manually revoked","Expires automatically in hours"],
+      ["Best practice","Use for CLI and external tools only","Always use for service-to-service AWS auth"]
+    ]},
+    {type:"note", text:"Interview answer: EC2 instances never store IAM user keys. They use IAM instance profiles — roles attached to the instance that provide auto-rotating temporary credentials via the metadata API at 169.254.169.254. If the server is compromised, credentials expire within hours with no manual intervention needed."}
+  ]},
+  {title:"How does an ECS rolling deployment work", badge:"Advanced — impresses interviewers", sections:[
+    {type:"code", code:`Timeline of ECS rolling deploy (zero downtime):
+
+T+0:  You push new code to main
+T+1:  GitHub Actions builds new Docker image tagged :abc1234
+T+2:  New image pushed to ECR
+T+3:  GitHub Actions registers Task Definition revision 5
+        (same as rev 4 but new image URI)
+T+4:  GitHub Actions calls ecs update-service
+T+5:  ECS starts NEW task (rev 5) in Fargate
+        Both rev4 and rev5 tasks now registered in ALB target group
+T+6:  ALB health check pings new task every 30s
+T+8:  New task passes 3 consecutive /health checks → marked HEALTHY
+T+9:  ALB begins routing traffic to new task
+T+10: ECS begins deregistering old task (rev4) from ALB
+T+11: Deregistration delay (default 30s) — existing connections drain
+T+12: Old task stopped and terminated
+
+If new task FAILS health checks:
+  → ECS stops new task
+  → Old task remains registered and serving traffic
+  → Automatic rollback with zero manual intervention
+  → Pipeline fails with error — you get notified`},
+    {type:"note", text:"Interview: ECS rolling deploy is zero-downtime by design. The ALB only routes to healthy tasks. Failed health checks mean the old version is never removed. No manual rollback needed — it is built into the service update process."}
+  ]},
+  {title:"HTTPS end-to-end flow — what actually happens", badge:"Full stack + DevOps crossover", sections:[
+    {type:"code", code:`User types https://yourdomain.com in browser
+
+Step 1 — DNS resolution
+  Browser asks OS → OS checks local cache → asks Route 53
+  Route 53 returns: ALB's IP address (via ALIAS record)
+
+Step 2 — TLS handshake (HTTPS setup)
+  Browser connects to ALB on port 443
+  ALB presents ACM SSL certificate for yourdomain.com
+  Browser verifies certificate with Certificate Authority (Amazon)
+  Encrypted TLS session established between browser and ALB
+
+Step 3 — ALB SSL termination
+  ALB decrypts the HTTPS request
+  Reads URL path: is it /api/* or /*?
+  Forwards plain HTTP internally to the correct target group
+
+Step 4 — Container receives request
+  EC2 flow: Nginx → Docker container (plain HTTP)
+  ECS flow: ALB → ECS task directly (plain HTTP)
+  App processes request, returns response
+
+Step 5 — Response returns
+  Container → ALB → ALB encrypts response → Browser decrypts it
+
+Key insight: HTTPS only exists between browser and ALB.
+Internal traffic (ALB → app) is plain HTTP — acceptable because
+it travels inside a private VPC subnet, never the public internet.`}
+  ]},
+  {title:"Key concepts quick reference", badge:"Study sheet — memorize these", sections:[
+    {type:"table", headers:["Term","One-line definition"], rows:[
+      ["Availability Zone (AZ)","Physically separate data center within a region — independent power and cooling"],
+      ["Region","Geographic area containing 3+ AZs (e.g. us-east-1 = N. Virginia)"],
+      ["High Availability","System stays up even if one AZ fails — requires multi-AZ deployment"],
+      ["Horizontal scaling","Add more instances (scale out). Vertical = bigger instance (scale up)"],
+      ["Blue/Green deploy","Run new version alongside old, switch 100% of traffic at once — instant rollback"],
+      ["Rolling deploy","Replace old instances with new gradually — ECS default, zero downtime"],
+      ["Health check","Endpoint ALB/ECS polls to verify app is functional, not just alive as a process"],
+      ["Target group","Set of EC2/ECS targets that ALB routes traffic to — has its own health check"],
+      ["Task Definition","ECS blueprint: Docker image + CPU + RAM + env vars + port + log config"],
+      ["ECS Service","Keeps N tasks running, integrates with ALB, handles rolling deploys automatically"],
+      ["CIDR","IP address range: 10.0.0.0/16 means 65,536 addresses (/16 = 16 bits fixed)"],
+      ["Ingress / Egress","Inbound traffic (ingress) and outbound traffic (egress)"],
+      ["ACM","AWS Certificate Manager — free SSL/TLS certs for AWS-attached resources"],
+      ["NAT Gateway","Lets private subnet instances reach internet outbound, blocks inbound"],
+      ["ALIAS record","Route 53 record pointing root domain to AWS resource — use instead of CNAME for root"],
+      ["Instance Profile","IAM role attached to EC2 — provides credentials without storing keys"]
+    ]}
+  ]},
+  {title:"Your DevOps learning roadmap", badge:"What to learn next", sections:[
+    {type:"table", headers:["Stage","Topics to learn","Estimated time"], rows:[
+      ["You are here","EC2 + ECS + GitHub Actions + Route 53 + Docker","Now"],
+      ["Stage 2","Terraform — recreate your entire setup as code files","Month 2"],
+      ["Stage 3","Proper VPC design, private subnets, NAT Gateway, RDS basics","Month 3"],
+      ["Stage 4","ECS auto-scaling policies, ALB advanced routing, WAF, CloudFront CDN","Month 4"],
+      ["Stage 5","Kubernetes concepts — EKS, pods, services, ingress, Helm basics","Month 5-6"],
+      ["Stage 6","Prometheus + Grafana monitoring, GitOps with ArgoCD, Helm charts","Month 6+"]
+    ]},
+    {type:"ok", text:"With EC2 + ECS mastered plus Terraform basics, you can confidently apply for: Junior DevOps Engineer, Cloud Engineer, Platform Engineer, or Infrastructure Engineer roles. These 4 stages cover 80% of what those jobs need day-to-day."}
+  ]}
+];
+
+buildView('overview','AWS services overview — first sight','Every service you will use, what it does, and one-line interview answers.',overviewData,'ov');
+buildView('ec2flow','Complete EC2 deployment flow','2 GitHub repos (Next.js + NestJS) · Supabase DB · Docker · GitHub Actions CI/CD · Nginx · Route 53. Start here.',ec2Data,'ec');
+buildView('ecsflow','Complete ECS Fargate deployment flow','Production-grade, zero server management, auto-scaling. Learn EC2 first, then do this.',ecsData,'ecs');
+buildView('cost','Cost control — keep your AWS bill low','Know what costs money, set alerts immediately, and build good habits from day one.',costData,'co');
+buildView('interview','Interview preparation','Questions that actually come up — with complete model answers you can say confidently.',interviewData,'int');
+</script>
+</body>
+</html>
